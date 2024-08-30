@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+1. Register Page
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ստանալ Google-ով մուտք գործելու ֆունկցիոնալությունը
+Մուտք գործելու ժամանակ աշխատելու է signin endpoint-ը որի ժամանակ սերվերից ստանում եք jwt secret key որը պետք է պահել cookie-ներում
 
-## Available Scripts
+Հետո get_user_data endpoint-ով ստանում ենք օգտվողի տվյալները և դրանք պահում global state-ում օրինակ Redux կարող եք օգտագործել Context 2 folder-ներնել առկա են համապատասխան ֆայլերով, ստանալուց հետո navigate եք անում դեպի Users page "/users"
 
-In the project directory, you can run:
+ստորև ներկայացնում եմ help codes
 
-### `npm start`
+  useEffect(() => {
+    if (token) {
+      const userHeaders = {
+        Authorization: `Bearer ${token}`,
+      };
+      const userRequestOptions = {
+        method: "GET",
+        headers: userHeaders,
+        redirect: "follow",
+      };
+      fetch("api/get_user_data", userRequestOptions)
+        .then((resp) => resp.json())
+        .then((res) => {
+          setUser(res); պահպանել տվյալները global state-ում
+          navigate("/users");
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [token, setUser, navigate]);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  մնացած մասն արդեն Register.jsx-ում
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+  2․ Users Page
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  Cookie-ներից jwt token-ի ստացում
 
-### `npm run build`
+    useEffect(() => {
+    const savedToken = getCookie("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  Այնուհետև ստորև ներկայացված կոդի հիման վրա ստանալ բոլոր օգտվողների վերաբերյալ ինֆորմացիան և ցուցադրել User page-ում յուրաքանչյուրի համար կլինեն այսպես կոչված card-եր որոնց օրինակը կարող եք տեսնել static/images folder-ում
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    useEffect(() => {
+    if (token) {
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
 
-### `npm run eject`
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+      fetch("api/get_all_users_data", requestOptions)
+    }
+  }, [token]);
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  գրել նաև responsive css(media-query) որ ցանկացած device-ի համար հարմարվեն տվյալ card-երը, օրինակ․ շատ փոքր հեռախոսների համար դրանք լինեն 1 սյունով շատ մեծերի համար 3 սյունով
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  3․ Header
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  Հավաքել basic Header որտեղ կլինի Logo Users page-ի navigation-ը ինչպես նաև global state-ից ստանալ տվյալ պահին մուտք գործած օգտվողի նկարը որին սեղմելուց կբացվի փոքր dropdown որի առաջին տողում կլինի նրա անուն ազգանունը, իսկ 2րդ տողում նրա email-ը
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  4. Global
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  Ծանոթացեք ընդհանուր ստրուկտուրային folder-ների file-երի դասավորվածությանը, ուշադրություն դարձրեք jsconfig.json ֆայլին որը նախատեսված է import-ները հեշտ կազմակերպելու համար։
+  Ուսումնասիրեք բոլոր կոդերը ընդհանուր գաղափար կազմեք և շուտով ձեզ կտրամադրվի նաև backend-ի հատվածը և api արդեն հասանելի կլինի, ձեր api կանչերի հետ կապված հատվածները ռեալիզացնելու համար։
