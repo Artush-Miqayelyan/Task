@@ -22,7 +22,7 @@ const Register = () => {
         redirect: "follow", 
       };
 
-      fetch("https://waste-management-web.onrender.com/get_user_data", userRequestOptions) 
+      fetch("api/get_user_data", userRequestOptions) 
         .then((resp) => resp.json()) 
         .then((res) => {
           dispatch(setCurrentUser(res))
@@ -44,7 +44,7 @@ const Register = () => {
       body: raw,
       redirect: "follow",
     };
-    fetch("https://waste-management-web.onrender.com/signin", requestOptions)
+    fetch("api/signin", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log('signed in . + result')
